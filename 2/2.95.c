@@ -21,7 +21,7 @@ void show_byte(bytepointer p, unsigned int size) {
      puts("");
 }
 
-float_bits float_twice(float_bits f) {
+float_bits float_half(float_bits f) {
     unsigned sign = f >> 31;
     unsigned exp = f >> 23 & 0xFF;
     unsigned frac = f & 0x7FFFFF;
@@ -31,22 +31,17 @@ float_bits float_twice(float_bits f) {
     if(exp == 0xFF)
         return f;
 
-    unsigned flag = frac >> 22 & 0x1;
-    if(!exp && !flag) {
-        frac <<= 1;
+    unsigned flag = (frac & 0x1) & (frac >> 1 & 0x1);
+    if(!exp) {
+        frac = (frac >> 1) + flag;
     }
-    else if(!exp && flag) {
-        frac = (frac << 1) & 0x7FFFFF;
-        exp ++;
+    else if(exp == 1) {
+        frac = ((frac | 0x800000) >> 1) + flag;
+        exp --;
     }
     else {
-        exp ++;
-
-        if(exp == 0xFF)
-            frac = 0;
+        exp --;
     }
-
-    // printf("%u %u %u\n", sign, exp, frac);
 
     return (sign << 31) | (exp << 23) | frac;
 }
@@ -56,8 +51,8 @@ int main() {
     unsigned long long tt = (1ull << 32) - 1;
     for(unsigned i = 0; i < tt; i ++) {
         t.i = i;
-        t.f = 2.0 * t.f;
-        unsigned r = float_twice(i);
+        t.f = 0.5 * t.f;
+        unsigned r = float_half(i);
         if(t.i != r) {
             show_byte((bytepointer)&i, sizeof i);
             show_byte((bytepointer)&t.i, sizeof i);

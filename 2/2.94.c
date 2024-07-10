@@ -51,6 +51,27 @@ float_bits float_twice(float_bits f) {
     return (sign << 31) | (exp << 23) | frac;
 }
 
+// float_bits float_twice(float_bits f) {
+//     unsigned sign = f >> 31;
+//     unsigned exp = f >> 23 & 0xFF;
+//     unsigned frac = f & 0x7FFFFF;
+
+//     int is_nan_oo = (exp == 0xFF);
+//     if (is_nan_oo) {
+//         return f;
+//     }
+//     if (exp == 0xFF-1) {
+//         frac = 0;
+//     } else if (exp == 0) {
+//         /* Denormalized */
+//         frac <<= 1;    // 直接左移，无论frac高位是否为1，都符合条件。
+//     } else {
+//         /* Normalized */
+//         exp += 1;
+//     }
+//     return sign << 31 | exp << 23 | frac;
+// }
+
 int main() {
     union databits t;    
     unsigned long long tt = (1ull << 32) - 1;

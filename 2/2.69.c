@@ -14,6 +14,11 @@ void show_byte(bytepointer p, unsigned int size) {
 }
 
 unsigned rotate_left(unsigned x, int n) {
+     /*
+          在下面做法中，当n为0时，x右移32位，引发未定义行为，产生值仍为x本身，符合预期。
+          更好的做法是
+          unsigned t1 = x >> (sizeof(int) * 8 - n - 1) >> 1;
+     */
      unsigned t1 = x >> (sizeof(int) * 8 - n);
      unsigned t2 = x << n;
 

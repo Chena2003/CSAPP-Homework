@@ -34,71 +34,48 @@ unsigned lowbits(unsigned x) {
 }
 
 int float_f2i(float_bits f) {
-    int sign = (f >> 31) ? -1 : 1;
+    int sign = f >> 31;
     unsigned exp = f >> 23 & 0xFF;
     unsigned frac = f & 0x7FFFFF;
+    unsigned bias = 0x7F;
 
-    // printf("%u %u\n", exp, frac);
-
-    if(exp < 126) {
+    if(exp < bias) {
         return 0;
     }
-    else if(exp < 127) {
-        return frac ? 1 : 0;
-    }
-    else if(exp < 157) {
-        unsigned lbits = lowbits(frac);
-        unsigned dbits = 23 - lbits;
-        int mbits = exp - 127;
-
-        printf("%u %u %d\n", lbits, dbits, mbits);
-
-        printf("%x\n", frac);
-
-        frac = (frac | 0x800000) >> lbits << mbits;
-
-        printf("%x\n", frac);
-
-        unsigned flag = dbits ? (frac >> dbits & 0x1) & (frac >> (dbits - 1) & 0x1) : 0;
-
-        printf("%u\n", flag);
-
-        return ((frac >> dbits) + flag) * sign;
-    }
-    else
+    else if(exp >= 31 + bias) {
         return 0x80000000;
+    }
+    else {
+        unsigned res;
+        unsigned E = exp - bias;
+        unsigned M = frac | 0x800000;
+
+        if(E > 23)
+            res = M << (E - 23);
+        else
+            res = M >> (23 - E);
+
+        return sign ? -res : res;
+    }
 }
 
 int main() {
-    // union databits t;    
-    // unsigned long long tt = (1ull << 32) - 1;
-    // for(unsigned i = 0; i < tt; i ++) {
-    //     t.i = i;
-    //     int m = (int)(t.f + 0.5);
+    union databits t;    
+    unsigned long long tt = (1ull << 32) - 1;
+    for(unsigned i = 0; i < tt; i ++) {
+        t.i = i;
+        int m = (int)t.f;
 
-    //     if(fabs(t.f - (int)t.f - 0.5) < 1e-9) {
-    //         m &= ~0 - 1;
-    //     }
+        int r = float_f2i(i);
+        if(m != r) {
+            show_byte((bytepointer)&i, sizeof i);
+            show_byte((bytepointer)&m, sizeof i);
+            show_byte((bytepointer)&r, sizeof r);
+            printf("%.10f %d %d\n", t.f, m, r);
 
-    //     int r = float_f2i(i);
-    //     if(m != r) {
-    //         show_byte((bytepointer)&i, sizeof i);
-    //         show_byte((bytepointer)&m, sizeof i);
-    //         show_byte((bytepointer)&r, sizeof r);
-    //         printf("%.10f %d %d\n", t.f, m, r);
-
-    //         break;
-    //     }
-    // }
-
-    union databits t;
-    t.i = 0x40200001;
-    // int m = (int)(t.f + 0.5);
-    int r = float_f2i(t.i);
-    
-    // show_byte((bytepointer)&m, sizeof(int));
-    // printf("%f, %d\n", t.f, m);
-    printf("%d %d\n", r, (int)t.f);
+            break;
+        }
+    }
 
     return 0;
 }

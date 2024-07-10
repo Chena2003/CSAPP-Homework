@@ -13,8 +13,13 @@ void show_byte(bytepointer p, unsigned int size) {
      puts("");
 }
 
+// int lower_one_mask(int n) {
+//      return (1ull << n) - 1; // 使用long long类型处理n为32的情况
+// }
+
+// 更好的解决方法
 int lower_one_mask(int n) {
-     return (1ull << n) - 1;
+     return (unsigned)-1 >> (32 - n); 
 }
 
 int main() {

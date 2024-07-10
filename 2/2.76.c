@@ -24,6 +24,9 @@ void *calloc(size_t nmemb, size_t size) {
           return NULL;
 
      void *p = malloc(r);
+     if(!p)
+          return NULL;
+
      memset(p, 0, r);
 
      return p;

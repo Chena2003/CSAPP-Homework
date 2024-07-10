@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <assert.h>
+#include <limits.h>
 
 typedef unsigned char *bytepointer;
 
@@ -25,10 +26,17 @@ bool tsub_ok(int x, int y) {
 
 int main() {
 
-     printf(tsub_ok(0x80000000, 0x10000000)? "true\n": "false\n");
-     printf(tsub_ok(0x10000000, 0x1)? "true\n": "false\n");
-     printf(tsub_ok(0x10000000, 0x20000000)? "true\n": "false\n");
-     printf(tsub_ok(0x7fffffff, 0x80000000)? "true\n": "false\n");
+     // printf(tsub_ok(0x80000000, 0x10000000)? "true\n": "false\n");
+     // printf(tsub_ok(0x10000000, 0x1)? "true\n": "false\n");
+     // printf(tsub_ok(0x10000000, 0x20000000)? "true\n": "false\n");
+     // printf(tsub_ok(0x7fffffff, 0x80000000)? "true\n": "false\n");
+
+     assert(!tsub_ok(INT_MIN, 1));
+     assert(!tsub_ok(INT_MAX, -1));
+     assert(tsub_ok(0, 0));
+     assert(!tsub_ok(INT_MIN, INT_MAX));
+     assert(!tsub_ok(INT_MAX, INT_MIN));
+     assert(tsub_ok(10, 8));
 
      return 0;
 }

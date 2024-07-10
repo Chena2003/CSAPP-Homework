@@ -1,36 +1,30 @@
 #include <stdio.h>
-typedef unsigned char* byte_pointer;
+#include <stdbool.h>
+#include <assert.h>
 
-void show_bytes(byte_pointer start, size_t len) {
-    size_t i;
-    for(i = 0; i < len; i++)
-        printf(" %.2x", start[i]);
-    printf("\n");
+typedef unsigned char *bytepointer;
+
+void show_byte(bytepointer p, unsigned int size) {
+     printf("0x");
+     for(unsigned int i = size - 1; i > 0; i --) { // 小端存储
+          printf("%02x", p[i]);
+     }
+     printf("%02x", p[0]);
+     puts("");
 }
 
-void show_int(int x) {
-    show_bytes((byte_pointer) &x, sizeof(int));
-}
-
-void show_float(float x) {
-    show_bytes((byte_pointer) &x, sizeof(float));
-}
-
-void show_pointer(void* x) {
-    show_bytes((byte_pointer) &x, sizeof(void *));
-}
-
-void test_show_bytes(int val) {
-    int ival = val;
-    float fval = (float)val;
-    int *pval = &val;
-    show_int(ival);
-    show_float(fval);
-    show_pointer(pval);
+unsigned rotate_left(unsigned x, int n) {
+    int w = sizeof(int) <<3;
+    return (x << n) | (x >> (w - n -1) >> 1);
 }
 
 int main() {
-    int val = 12345;
-    test_show_bytes(val);
-    return 0;
+     unsigned x = 0x12345678;
+     for(int i = 0; i <= 32; i += 4) {
+          unsigned t = rotate_left(x, i);
+
+          show_byte((bytepointer)&t, sizeof t);
+     }
+
+     return 0;
 }

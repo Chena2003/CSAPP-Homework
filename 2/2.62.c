@@ -12,9 +12,12 @@ void show_byte(bytepointer p, unsigned int size) {
 }
 
 bool int_shifts_are_artithmetic() {
-     int x = 0xffffffff;
+     // int x = 0xffffffff;
+     // int x = -1; // ~0
+     int x = ~0;
 
-     return (x >> 8) == x;
+     // return (x >> 8) == x;
+     return !(x ^ (x >> 1));
 }
 
 int main() {

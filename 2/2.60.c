@@ -10,12 +10,21 @@ void show_byte(bytepointer p, unsigned int size) {
      puts("");
 }
 
+// 通过读写字节序列
+// unsigned replace_byte(unsigned x , int i, unsigned char b) {
+//      unsigned char* p = (unsigned char *)&x;
+
+//      *(p + i) = b;
+
+//      return *(unsigned *)p;
+// }
+
+// 通过移位操作
 unsigned replace_byte(unsigned x , int i, unsigned char b) {
-     unsigned char* p = (unsigned char *)&x;
+     unsigned mask = ((unsigned)0xFF) << (i << 3);
+     unsigned des_bytes = ((unsigned)b) << (i << 3);
 
-     *(p + i) = b;
-
-     return *(unsigned *)p;
+     return (x & ~mask) | des_bytes;
 }
 
 int main() {

@@ -13,7 +13,8 @@ void show_byte(bytepointer p, unsigned int size) {
 }
 
 bool any_odd_one(unsigned x) {
-     return x & 0xaaaa;
+     // return x & 0xaaaa;
+     return !!(x & 0xAAAA);
 }
 
 int main() {
